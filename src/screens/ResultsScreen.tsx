@@ -1,16 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
   StatusBar,
+  ActivityIndicator,
+  Alert,
+  FlatList,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../types/navigation';
-import { saveScore } from '../utils/storage';
+import { Resultado, RootStackParamList } from '../types/navigation';
+import { getScores, saveScore } from '../utils/storage';
 import { useInterstitialAd } from '../hooks/useInterstitialAd';
 
 type Props = {
@@ -33,14 +36,74 @@ function getResultMessage(pct: number) {
 }
 
 export default function ResultsScreen({ navigation, route }: Props) {
-  const { score, correctAnswers, totalQuestions, category, wrongAnswers } = route.params;
-  const percentage = Math.round((correctAnswers / totalQuestions) * 100);
+  const params = route.params;
   const { showAdIfReady } = useInterstitialAd();
+  const [resultados, setResultados] = useState<Resultado[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const partidaGuardada = useRef<number | null>(null);
+
+  const score = params?.score ?? 0;
+  const correctAnswers = params?.correctAnswers ?? 0;
+  const totalQuestions = params?.totalQuestions ?? 0;
+  const category = params?.category ?? 'all';
+  const wrongAnswers = params?.wrongAnswers ?? [];
+  const percentage = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
+
+  async function leerResultados() {
+    try {
+      const lista = await getScores();
+      setResultados(lista);
+      setCargando(false);
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert('Error', error.message);
+      }
+      setCargando(false);
+    }
+  }
 
   useEffect(() => {
-    saveScore({ score, correctAnswers, totalQuestions, category }).catch(() => {});
+    if (!params) {
+      setCargando(false);
+      return;
+    }
+
+    if (partidaGuardada.current === params.playedAt) return;
+    partidaGuardada.current = params.playedAt;
+
+    async function guardarYLeerResultados() {
+      try {
+        await saveScore({ score, correctAnswers, totalQuestions, category });
+        await leerResultados();
+      } catch (error) {
+        if (error instanceof Error) {
+          Alert.alert('Error', error.message);
+        }
+        setCargando(false);
+      }
+    }
+
+    guardarYLeerResultados();
     showAdIfReady();
-  }, []);
+  }, [params?.playedAt]);
+
+  if (!params) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="light-content" backgroundColor="#1a1a2e" />
+        <View style={styles.content}>
+          <Text style={styles.message}>No hay resultados para mostrar</Text>
+          <TouchableOpacity
+            style={[styles.button, styles.buttonPrimary]}
+            onPress={() => navigation.navigate('Home')}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.buttonTextPrimary}>Ir al inicio</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -73,10 +136,32 @@ export default function ResultsScreen({ navigation, route }: Props) {
         </View>
       </View>
 
+      <View style={styles.resultsList}>
+        <Text style={styles.listTitle}>Lista de resultados</Text>
+        {cargando ? (
+          <ActivityIndicator color="#e94560" />
+        ) : (
+          <FlatList
+            data={resultados}
+            keyExtractor={(item) => item.id}
+            style={styles.flatList}
+            renderItem={({ item }) => (
+              <View style={styles.resultItem}>
+                <Text style={styles.resultText}>Nick: {item.nick}</Text>
+                <Text style={styles.resultText}>Puntaje: {item.puntaje}</Text>
+              </View>
+            )}
+            ListEmptyComponent={
+              <Text style={styles.emptyResults}>No existen resultados guardados</Text>
+            }
+          />
+        )}
+      </View>
+
       <View style={styles.buttons}>
         <TouchableOpacity
           style={[styles.button, styles.buttonPrimary]}
-          onPress={() => navigation.replace('Game', { category })}
+          onPress={() => navigation.navigate('Game', { category, gameId: Date.now() })}
           activeOpacity={0.8}
         >
           <Text style={styles.buttonTextPrimary}>🔄  Jugar de nuevo</Text>
@@ -183,6 +268,34 @@ const styles = StyleSheet.create({
   buttons: {
     gap: 12,
     paddingBottom: 24,
+  },
+  resultsList: {
+    maxHeight: 170,
+    marginBottom: 14,
+  },
+  listTitle: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  flatList: {
+    borderTopWidth: 1,
+    borderTopColor: '#0f3460',
+  },
+  resultItem: {
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#0f3460',
+  },
+  resultText: {
+    color: '#e2e2e2',
+    fontSize: 14,
+  },
+  emptyResults: {
+    color: '#a8a8b3',
+    fontSize: 14,
+    paddingVertical: 8,
   },
   button: {
     borderRadius: 14,
