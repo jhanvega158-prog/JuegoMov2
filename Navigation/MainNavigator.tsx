@@ -1,6 +1,5 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../src/types/navigation";
-import { NavigationContainer } from "@react-navigation/native";
+
+// NavigationContainer must live at app root (App.tsx). Do not wrap navigators here.
 import HomeScreen from "../src/screens/HomeScreen";
 import CategorySelectScreen from "../src/screens/CategorySelectScreen";
 import GameScreen from "../src/screens/GameScreen";
@@ -10,8 +9,10 @@ import ReviewAnswersScreen from "../src/screens/ReviewAnswersScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import LoginScreen from "../src/screens/LoginScreen";
 import RegistroScreen from "../src/screens/RegistroScreen";
+import { createStackNavigator } from "@react-navigation/stack";
+import { RootStackParamList } from "../src/types/navigation";
 
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
 function MyStack() {
@@ -38,7 +39,6 @@ function MyTabs() {
             <Tab.Screen
                 name="Home"
                 component={HomeScreen}
-                options={{ headerShown: false }}
             />
             <Tab.Screen
                 name="CategorySelect"
@@ -48,12 +48,12 @@ function MyTabs() {
             <Tab.Screen
                 name="Game"
                 component={GameScreen}
-                options={{ title: 'Trivia', headerBackVisible: false  }}
+                options={{ title: 'Trivia' }}
             />
             <Tab.Screen
                 name="Results"
                 component={ResultsScreen}
-                options={{ title: 'Resultado', headerBackVisible: false }}
+                options={{ title: 'Resultado' }}
             />
             <Tab.Screen
                 name="HighScores"
@@ -66,16 +66,11 @@ function MyTabs() {
                 options={{ title: 'Respuestas correctas' }}
             />
         </Tab.Navigator>
-
     );
-
 }
 
 export function Navegador() {
     return (
-
-        <NavigationContainer>
-            <MyStack />
-        </NavigationContainer>
+        <MyStack />
     );
 }
