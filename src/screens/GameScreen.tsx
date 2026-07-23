@@ -24,8 +24,9 @@ type Props = {
 type AnswerState = 'unanswered' | 'correct' | 'wrong';
 
 export default function GameScreen({ navigation, route }: Props) {
-  const { category } = route.params;
-  const [questions] = useState<Question[]>(() => getQuestions(category));
+  const category = route.params?.category ?? 'all';
+  const gameId = route.params?.gameId ?? 0;
+  const [questions, setQuestions] = useState<Question[]>(() => getQuestions(category));
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
@@ -40,14 +41,30 @@ export default function GameScreen({ navigation, route }: Props) {
   const currentQuestion = questions[currentIndex];
   const isLastQuestion = currentIndex === questions.length - 1;
 
-  const goToNext = useCallback(() => {
+  useEffect(() => {
+    setQuestions(getQuestions(category));
+    setCurrentIndex(0);
+    setScore(0);
+    setCorrectAnswers(0);
+    setWrongAnswers([]);
+    setTimeLeft(GAME_CONFIG.QUESTION_TIMER_SECONDS);
+    setSelectedOption(null);
+    setAnswerState('unanswered');
+  }, [category, gameId]);
+
+  const goToNext = useCallback((
+    finalScore = score,
+    finalCorrectAnswers = correctAnswers,
+    finalWrongAnswers = wrongAnswers
+  ) => {
     if (isLastQuestion) {
-      navigation.replace('Results', {
-        score,
-        correctAnswers,
+      navigation.navigate('Results', {
+        score: finalScore,
+        correctAnswers: finalCorrectAnswers,
         totalQuestions: questions.length,
         category,
-        wrongAnswers,
+        wrongAnswers: finalWrongAnswers,
+        playedAt: Date.now(),
       });
     } else {
       setCurrentIndex((i) => i + 1);
@@ -55,7 +72,7 @@ export default function GameScreen({ navigation, route }: Props) {
       setAnswerState('unanswered');
       setTimeLeft(GAME_CONFIG.QUESTION_TIMER_SECONDS);
     }
-  }, [isLastQuestion, navigation, score, correctAnswers, questions.length, category]);
+  }, [isLastQuestion, navigation, score, correctAnswers, wrongAnswers, questions.length, category]);
 
   // Animación de la barra de tiempo
   useEffect(() => {
@@ -75,19 +92,19 @@ export default function GameScreen({ navigation, route }: Props) {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(timerRef.current!);
+          const nuevaRespuesta = {
+            question: currentQuestion.question,
+            options: currentQuestion.options,
+            correctIndex: currentQuestion.correctIndex,
+            selectedIndex: null,
+            category: currentQuestion.category,
+          };
+          const nuevasIncorrectas = [...wrongAnswers, nuevaRespuesta];
+
           setAnswerState('wrong'); // tiempo agotado = respuesta incorrecta
-          setWrongAnswers((prev) => [
-            ...prev,
-            {
-              question: currentQuestion.question,
-              options: currentQuestion.options,
-              correctIndex: currentQuestion.correctIndex,
-              selectedIndex: null,
-              category: currentQuestion.category,
-            },
-          ]);
+          setWrongAnswers(nuevasIncorrectas);
           playWrong();
-          setTimeout(goToNext, 1200);
+          setTimeout(() => goToNext(score, correctAnswers, nuevasIncorrectas), 1200);
           return 0;
         }
         return prev - 1;
@@ -110,24 +127,27 @@ export default function GameScreen({ navigation, route }: Props) {
 
     if (isCorrect) {
       const points = calculateScore(true, timeLeft);
-      setScore((s) => s + points);
-      setCorrectAnswers((c) => c + 1);
-      playCorrect();
-    } else {
-      setWrongAnswers((prev) => [
-        ...prev,
-        {
-          question: currentQuestion.question,
-          options: currentQuestion.options,
-          correctIndex: currentQuestion.correctIndex,
-          selectedIndex: index,
-          category: currentQuestion.category,
-        },
-      ]);
-      playWrong();
-    }
+      const nuevoPuntaje = score + points;
+      const nuevasCorrectas = correctAnswers + 1;
 
-    setTimeout(goToNext, 1200);
+      setScore(nuevoPuntaje);
+      setCorrectAnswers(nuevasCorrectas);
+      playCorrect();
+      setTimeout(() => goToNext(nuevoPuntaje, nuevasCorrectas, wrongAnswers), 1200);
+    } else {
+      const nuevaRespuesta = {
+        question: currentQuestion.question,
+        options: currentQuestion.options,
+        correctIndex: currentQuestion.correctIndex,
+        selectedIndex: index,
+        category: currentQuestion.category,
+      };
+      const nuevasIncorrectas = [...wrongAnswers, nuevaRespuesta];
+
+      setWrongAnswers(nuevasIncorrectas);
+      playWrong();
+      setTimeout(() => goToNext(score, correctAnswers, nuevasIncorrectas), 1200);
+    }
   }
 
   function getOptionStyle(index: number) {

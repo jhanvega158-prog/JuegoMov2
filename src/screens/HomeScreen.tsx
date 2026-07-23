@@ -29,7 +29,7 @@ export default function HomeScreen({ navigation }: Props) {
       <View style={styles.buttons}>
         <TouchableOpacity
           style={[styles.button, styles.buttonPrimary]}
-          onPress={() => navigation.navigate('Game', { category: 'all' })}
+          onPress={() => navigation.navigate('Game', { category: 'all', gameId: Date.now() })}
           activeOpacity={0.8}
         >
           <Text style={styles.buttonTextPrimary}>▶  Jugar ahora</Text>

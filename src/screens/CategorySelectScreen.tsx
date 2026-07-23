@@ -57,7 +57,7 @@ export default function CategorySelectScreen({ navigation }: Props) {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.card}
-            onPress={() => navigation.navigate('Game', { category: item })}
+            onPress={() => navigation.navigate('Game', { category: item, gameId: Date.now() })}
             activeOpacity={0.8}
           >
             <Text style={styles.cardIcon}>{getIcon(item)}</Text>

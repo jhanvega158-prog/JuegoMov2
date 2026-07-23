@@ -6,11 +6,29 @@ export type WrongAnswer = {
   category: string;
 };
 
+export type Resultado = {
+  id: string;
+  uid: string;
+  nick: string;
+  puntaje: number;
+  respuestasCorrectas: number;
+  totalPreguntas: number;
+  categoria: string;
+  fecha: string;
+};
+
+export type MainStackParamList = {
+  Login: undefined;
+  Registro: undefined;
+  Tab: undefined;
+};
+
 export type RootStackParamList = {
   Home: undefined;
   CategorySelect: undefined;
   Game: {
     category: string | 'all';
+    gameId?: number;
   };
   Results: {
     score: number;
@@ -18,6 +36,7 @@ export type RootStackParamList = {
     totalQuestions: number;
     category: string;
     wrongAnswers: WrongAnswer[];
+    playedAt: number;
   };
   ReviewAnswers: {
     wrongAnswers: WrongAnswer[];

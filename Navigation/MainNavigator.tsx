@@ -10,10 +10,14 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import LoginScreen from "../src/screens/LoginScreen";
 import RegistroScreen from "../src/screens/RegistroScreen";
 import { createStackNavigator } from "@react-navigation/stack";
-import { RootStackParamList } from "../src/types/navigation";
+import { MainStackParamList, RootStackParamList } from "../src/types/navigation";
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<MainStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
+
+const hiddenTabOptions = {
+    tabBarButton: () => null,
+};
 
 function MyStack() {
     return (
@@ -48,12 +52,12 @@ function MyTabs() {
             <Tab.Screen
                 name="Game"
                 component={GameScreen}
-                options={{ title: 'Trivia' }}
+                options={{ title: 'Trivia', ...hiddenTabOptions }}
             />
             <Tab.Screen
                 name="Results"
                 component={ResultsScreen}
-                options={{ title: 'Resultado' }}
+                options={{ title: 'Resultado', ...hiddenTabOptions }}
             />
             <Tab.Screen
                 name="HighScores"
@@ -63,7 +67,7 @@ function MyTabs() {
             <Tab.Screen
                 name="ReviewAnswers"
                 component={ReviewAnswersScreen}
-                options={{ title: 'Respuestas correctas' }}
+                options={{ title: 'Respuestas correctas', ...hiddenTabOptions }}
             />
         </Tab.Navigator>
     );

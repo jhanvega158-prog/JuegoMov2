@@ -19,7 +19,7 @@ type Props = {
 const LETTERS = ['A', 'B', 'C', 'D'];
 
 export default function ReviewAnswersScreen({ route }: Props) {
-  const { wrongAnswers } = route.params;
+  const wrongAnswers = route.params?.wrongAnswers ?? [];
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
