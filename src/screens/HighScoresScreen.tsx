@@ -1,14 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  FlatList,
-  StatusBar,
-  Alert,
-  ActivityIndicator,
-} from 'react-native';
+import {View,Text,TouchableOpacity,StyleSheet,FlatList,StatusBar,Alert,ActivityIndicator,} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { getScores, HighScore } from '../utils/storage';
@@ -21,7 +12,10 @@ export default function HighScoresScreen() {
     try {
       setCargando(true);
       const lista = await getScores();
-      setScores(lista);
+      const mejoresCinco = lista
+        .sort((a, b) => b.puntaje - a.puntaje)
+        .slice(0, 5);
+      setScores(mejoresCinco);
       setCargando(false);
     } catch (error) {
       if (error instanceof Error) {

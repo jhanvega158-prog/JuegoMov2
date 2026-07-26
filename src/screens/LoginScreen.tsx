@@ -37,7 +37,7 @@ export default function LoginScreen({ navigation }: Props) {
   }
 
   return (
-    <View>
+    <View style={Style.container}>
       <TextInput
         placeholder="Correo"
         onChangeText={setCorreo}
@@ -50,17 +50,21 @@ export default function LoginScreen({ navigation }: Props) {
         secureTextEntry
       />
 
-      <Button title="Login" onPress={login} />
       <Button
+        color="#930909"
+        title="Login"
+        onPress={login} />
+      <Button
+        color="#930909"
         title="olvidé mi contraseña"
         onPress={reestablecerContrasenia}
       />
 
       <Text
-        style={{ color: 'blue', fontSize: 16 }}
+        style={Style.input2}
         onPress={() => navigation.navigate('Registro')}
       >
-        Registrarse aquí
+        No tiene cuenta, regístrese aquí
       </Text>
     </View>
   );

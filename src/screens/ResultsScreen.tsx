@@ -1,14 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  StatusBar,
-  ActivityIndicator,
-  Alert,
-  FlatList,
-} from 'react-native';
+import {  View,  Text,  TouchableOpacity,  StyleSheet,  StatusBar,  ActivityIndicator,  Alert,  FlatList,} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
@@ -117,45 +108,6 @@ export default function ResultsScreen({ navigation, route }: Props) {
           <Text style={styles.scoreLabel}>Puntaje final</Text>
           <Text style={styles.scoreValue}>{score}</Text>
         </View>
-
-        <View style={styles.statsRow}>
-          <View style={styles.stat}>
-            <Text style={styles.statValue}>{correctAnswers}</Text>
-            <Text style={styles.statLabel}>Correctas</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.stat}>
-            <Text style={styles.statValue}>{totalQuestions - correctAnswers}</Text>
-            <Text style={styles.statLabel}>Incorrectas</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.stat}>
-            <Text style={styles.statValue}>{percentage}%</Text>
-            <Text style={styles.statLabel}>Acierto</Text>
-          </View>
-        </View>
-      </View>
-
-      <View style={styles.resultsList}>
-        <Text style={styles.listTitle}>Lista de resultados</Text>
-        {cargando ? (
-          <ActivityIndicator color="#e94560" />
-        ) : (
-          <FlatList
-            data={resultados}
-            keyExtractor={(item) => item.id}
-            style={styles.flatList}
-            renderItem={({ item }) => (
-              <View style={styles.resultItem}>
-                <Text style={styles.resultText}>Nick: {item.nick}</Text>
-                <Text style={styles.resultText}>Puntaje: {item.puntaje}</Text>
-              </View>
-            )}
-            ListEmptyComponent={
-              <Text style={styles.emptyResults}>No existen resultados guardados</Text>
-            }
-          />
-        )}
       </View>
 
       <View style={styles.buttons}>
@@ -187,7 +139,7 @@ export default function ResultsScreen({ navigation, route }: Props) {
 
         <TouchableOpacity
           style={[styles.button, styles.buttonOutline]}
-          onPress={() => navigation.popToTop()}
+          onPress={() => navigation.navigate('Home')}
           activeOpacity={0.8}
         >
           <Text style={styles.buttonTextOutline}>🏠  Ir al inicio</Text>

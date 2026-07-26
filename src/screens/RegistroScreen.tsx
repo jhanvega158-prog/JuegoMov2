@@ -38,8 +38,7 @@ export default function RegistroScreen({ navigation }: Props) {
   }
 
   return (
-    <View>
-      <Text>RegistroScreen</Text>
+    <View style={Style.container}>
       <TextInput
         placeholder="Ingresar Correo"
         onChangeText={setCorreo}
@@ -61,7 +60,10 @@ export default function RegistroScreen({ navigation }: Props) {
         onChangeText={setNick}
         style={Style.input}
       />
-      <Button title="Registro" onPress={registro} />
+      <Button
+        color="#930909"
+        title="Registro"
+        onPress={registro} />
     </View>
   );
 }
