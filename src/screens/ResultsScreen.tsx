@@ -7,6 +7,7 @@ import { Resultado, RootStackParamList } from '../types/navigation';
 import { getScores, saveScore } from '../utils/storage';
 import { useInterstitialAd } from '../hooks/useInterstitialAd';
 import { Fonts } from '../../style/estiloGlobal';
+import { useGame } from '../context/GameContext';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Results'>;
@@ -28,6 +29,7 @@ function getResultMessage(pct: number) {
 }
 
 export default function ResultsScreen({ navigation, route }: Props) {
+  const { startGame, resetGame } = useGame();
   const params = route.params;
   const { showAdIfReady } = useInterstitialAd();
   const [resultados, setResultados] = useState<Resultado[]>([]);
@@ -114,7 +116,10 @@ export default function ResultsScreen({ navigation, route }: Props) {
       <View style={styles.buttons}>
         <TouchableOpacity
           style={[styles.button, styles.buttonPrimary]}
-          onPress={() => navigation.navigate('Game', { category, gameId: Date.now() })}
+          onPress={() => {
+            startGame(category);
+            navigation.navigate('Roulette', { category });
+          }}
           activeOpacity={0.8}
         >
           <Text style={styles.buttonTextPrimary}>🔄  Jugar de nuevo</Text>
@@ -140,7 +145,7 @@ export default function ResultsScreen({ navigation, route }: Props) {
 
         <TouchableOpacity
           style={[styles.button, styles.buttonOutline]}
-          onPress={() => navigation.navigate('Home')}
+          onPress={() => { resetGame(); navigation.navigate('Home'); }}
           activeOpacity={0.8}
         >
           <Text style={styles.buttonTextOutline}>🏠  Ir al inicio</Text>

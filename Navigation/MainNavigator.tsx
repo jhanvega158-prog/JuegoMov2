@@ -5,6 +5,7 @@ import GameScreen from "../src/screens/GameScreen";
 import ResultsScreen from "../src/screens/ResultsScreen";
 import HighScoresScreen from "../src/screens/HighScoresScreen";
 import ReviewAnswersScreen from "../src/screens/ReviewAnswersScreen";
+import RouletteScreen from "../src/screens/RouletteScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import LoginScreen from "../src/screens/LoginScreen";
 import RegistroScreen from "../src/screens/RegistroScreen";
@@ -58,6 +59,11 @@ function MyTabs() {
         name="CategorySelect"
         component={CategorySelectScreen}
         options={{ title: "Categorías", ...hiddenTabOptions }}
+      />
+      <Tab.Screen
+        name="Roulette"
+        component={RouletteScreen}
+        options={{ title: "Ruleta", ...hiddenTabOptions }}
       />
       <Tab.Screen
         name="Game"

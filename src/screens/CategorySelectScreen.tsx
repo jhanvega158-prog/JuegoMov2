@@ -13,6 +13,7 @@ import { RootStackParamList } from '../types/navigation';
 import { CATEGORIES } from '../data/questions_es';
 import { QUESTIONS_ES } from '../data/questions_es';
 import { Fonts } from '../../style/estiloGlobal';
+import { useGame } from '../context/GameContext';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'CategorySelect'>;
@@ -28,6 +29,7 @@ const CATEGORY_ICONS: Record<string, string> = {
 };
 
 export default function CategorySelectScreen({ navigation }: Props) {
+  const { startGame } = useGame();
   const allCategories = ['all', ...CATEGORIES];
 
   function getCount(cat: string) {
@@ -58,7 +60,10 @@ export default function CategorySelectScreen({ navigation }: Props) {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.card}
-            onPress={() => navigation.navigate('Game', { category: item, gameId: Date.now() })}
+            onPress={() => {
+              startGame(item);
+              navigation.navigate('Roulette', { category: item });
+            }}
             activeOpacity={0.8}
           >
             <Text style={styles.cardIcon}>{getIcon(item)}</Text>
