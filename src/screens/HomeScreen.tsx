@@ -1,15 +1,10 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  StatusBar,
-} from 'react-native';
+import {  View,  Text,  TouchableOpacity,  StyleSheet,  StatusBar,} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import { CATEGORIES } from '../data/questions_es';
+import { Fonts } from '../../style/estiloGlobal';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
@@ -29,7 +24,7 @@ export default function HomeScreen({ navigation }: Props) {
       <View style={styles.buttons}>
         <TouchableOpacity
           style={[styles.button, styles.buttonPrimary]}
-          onPress={() => navigation.navigate('Game', { category: 'all' })}
+          onPress={() => navigation.navigate('Game', { category: 'all', gameId: Date.now() })}
           activeOpacity={0.8}
         >
           <Text style={styles.buttonTextPrimary}>▶  Jugar ahora</Text>
@@ -76,12 +71,14 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   title: {
+    fontFamily: Fonts.primary,
     fontSize: 36,
     fontWeight: '800',
     color: '#e94560',
     letterSpacing: 1,
   },
   subtitle: {
+    fontFamily: Fonts.primary,
     fontSize: 16,
     color: '#a8a8b3',
     marginTop: 8,
@@ -109,16 +106,19 @@ const styles = StyleSheet.create({
     borderColor: '#a8a8b3',
   },
   buttonTextPrimary: {
+    fontFamily: Fonts.primary,
     color: '#fff',
     fontSize: 18,
     fontWeight: '700',
   },
   buttonTextSecondary: {
+    fontFamily: Fonts.primary,
     color: '#e2e2e2',
     fontSize: 16,
     fontWeight: '600',
   },
   buttonTextOutline: {
+    fontFamily: Fonts.primary,
     color: '#a8a8b3',
     fontSize: 16,
     fontWeight: '600',
@@ -129,10 +129,12 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   footerText: {
+    fontFamily: Fonts.primary,
     color: '#555577',
     fontSize: 13,
   },
   footerCopy: {
+    fontFamily: Fonts.primary,
     color: '#3a3a5c',
     fontSize: 11,
   },

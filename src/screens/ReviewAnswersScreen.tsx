@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
+import { Fonts } from '../../style/estiloGlobal';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'ReviewAnswers'>;
@@ -19,7 +20,7 @@ type Props = {
 const LETTERS = ['A', 'B', 'C', 'D'];
 
 export default function ReviewAnswersScreen({ route }: Props) {
-  const { wrongAnswers } = route.params;
+  const wrongAnswers = route.params?.wrongAnswers ?? [];
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
@@ -98,6 +99,7 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   subtitle: {
+    fontFamily: Fonts.primary,
     color: '#a8a8b3',
     fontSize: 14,
     textAlign: 'center',
@@ -117,6 +119,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cardCategory: {
+    fontFamily: Fonts.primary,
     color: '#e94560',
     fontSize: 12,
     fontWeight: '700',
@@ -124,11 +127,13 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   cardNumber: {
+    fontFamily: Fonts.primary,
     color: '#a8a8b3',
     fontSize: 12,
     fontWeight: '600',
   },
   question: {
+    fontFamily: Fonts.primary,
     color: '#fff',
     fontSize: 16,
     fontWeight: '700',
@@ -159,6 +164,7 @@ const styles = StyleSheet.create({
     opacity: 1,
   },
   optionLetter: {
+    fontFamily: Fonts.primary,
     color: '#a8a8b3',
     fontWeight: '800',
     fontSize: 14,
@@ -171,6 +177,7 @@ const styles = StyleSheet.create({
     color: '#e94560',
   },
   optionText: {
+    fontFamily: Fonts.primary,
     color: '#a8a8b3',
     fontSize: 14,
     flex: 1,
@@ -184,12 +191,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   badge: {
+    fontFamily: Fonts.primary,
     color: '#4caf50',
     fontSize: 11,
     fontWeight: '700',
     marginLeft: 6,
   },
   badgeWrong: {
+    fontFamily: Fonts.primary,
     color: '#e94560',
     fontSize: 11,
     fontWeight: '700',
@@ -205,6 +214,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   timeoutText: {
+    fontFamily: Fonts.primary,
     color: '#ff9800',
     fontSize: 12,
     fontWeight: '700',

@@ -1,94 +1,70 @@
 import React, { useState, useCallback } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  FlatList,
-  StatusBar,
-  Alert,
-} from 'react-native';
+import {View,Text,TouchableOpacity,StyleSheet,FlatList,StatusBar,Alert,ActivityIndicator,} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useFocusEffect } from '@react-navigation/native';
-import { RootStackParamList } from '../types/navigation';
-import { getScores, clearScores, HighScore } from '../utils/storage';
+import { getScores, HighScore } from '../utils/storage';
+import { Fonts } from '../../style/estiloGlobal';
 
-type Props = {
-  navigation: NativeStackNavigationProp<RootStackParamList, 'HighScores'>;
-};
-
-const MEDAL = ['🥇', '🥈', '🥉'];
-
-export default function HighScoresScreen({ navigation }: Props) {
+export default function HighScoresScreen() {
   const [scores, setScores] = useState<HighScore[]>([]);
+  const [cargando, setCargando] = useState(true);
+
+  const leerPuntajes = useCallback(async () => {
+    try {
+      setCargando(true);
+      const lista = await getScores();
+      const mejoresCinco = lista
+        .sort((a, b) => b.puntaje - a.puntaje)
+        .slice(0, 5);
+      setScores(mejoresCinco);
+      setCargando(false);
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert('Error', error.message);
+      }
+      setCargando(false);
+    }
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
-      getScores().then(setScores).catch(() => {});
-    }, [])
+      leerPuntajes();
+    }, [leerPuntajes])
   );
-
-  function handleClear() {
-    Alert.alert(
-      'Borrar puntajes',
-      '¿Estás seguro que quieres borrar todos los puntajes?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Borrar',
-          style: 'destructive',
-          onPress: () => {
-            clearScores().then(() => setScores([])).catch(() => {});
-          },
-        },
-      ]
-    );
-  }
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#1a1a2e" />
 
       <View style={styles.headerRow}>
-        <Text style={styles.title}>🏆 Mejores puntajes</Text>
-        {scores.length > 0 && (
-          <TouchableOpacity onPress={handleClear}>
-            <Text style={styles.clearBtn}>Borrar</Text>
-          </TouchableOpacity>
-        )}
+        <Text style={styles.title}>Mejores puntajes</Text>
+        <TouchableOpacity onPress={leerPuntajes} activeOpacity={0.8}>
+          <Text style={styles.verLista}>Ver lista</Text>
+        </TouchableOpacity>
       </View>
 
-      {scores.length === 0 ? (
+      {cargando ? (
         <View style={styles.empty}>
-          <Text style={styles.emptyEmoji}>🎮</Text>
-          <Text style={styles.emptyText}>Aún no hay puntajes</Text>
-          <Text style={styles.emptySubtext}>¡Juega tu primera partida!</Text>
-          <TouchableOpacity
-            style={styles.playBtn}
-            onPress={() => navigation.navigate('Home')}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.playBtnText}>Jugar ahora</Text>
-          </TouchableOpacity>
+          <ActivityIndicator color="#e94560" />
         </View>
       ) : (
         <FlatList
           data={scores}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.list}
+          ListHeaderComponent={
+            <Text style={styles.listTitle}>Lista de puntajes</Text>
+          }
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>No hay puntajes guardados</Text>
+          }
           renderItem={({ item, index }) => (
             <View style={[styles.row, index === 0 && styles.rowFirst]}>
-              <Text style={styles.medal}>
-                {index < 3 ? MEDAL[index] : `${index + 1}.`}
-              </Text>
+              <Text style={styles.position}>{index + 1}</Text>
               <View style={styles.rowInfo}>
-                <Text style={styles.rowScore}>{item.score} pts</Text>
-                <Text style={styles.rowDetail}>
-                  {item.correctAnswers}/{item.totalQuestions} correctas · {item.category === 'all' ? 'General' : item.category}
-                </Text>
+                <Text style={styles.rowNick}>Nick: {item.nick || 'Sin nick'}</Text>
+                <Text style={styles.rowScore}>Puntaje: {item.puntaje}</Text>
               </View>
-              <Text style={styles.rowDate}>{item.date}</Text>
             </View>
           )}
         />
@@ -111,19 +87,27 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   title: {
+    fontFamily: Fonts.primary,
     fontSize: 22,
     fontWeight: '700',
     color: '#fff',
   },
-  clearBtn: {
+  verLista: {
+    fontFamily: Fonts.primary,
     color: '#e94560',
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 15,
+    fontWeight: '700',
   },
   list: {
     paddingHorizontal: 16,
     gap: 10,
     paddingBottom: 24,
+  },
+  listTitle: {
+    fontFamily: Fonts.primary,
+    color: '#a8a8b3',
+    fontSize: 15,
+    marginBottom: 4,
   },
   row: {
     backgroundColor: '#16213e',
@@ -138,26 +122,27 @@ const styles = StyleSheet.create({
     borderColor: '#e94560',
     backgroundColor: '#1e1030',
   },
-  medal: {
-    fontSize: 24,
-    width: 36,
+  position: {
+    fontFamily: Fonts.primary,
+    color: '#e94560',
+    fontSize: 18,
+    fontWeight: '800',
+    width: 34,
   },
   rowInfo: {
     flex: 1,
   },
-  rowScore: {
+  rowNick: {
+    fontFamily: Fonts.primary,
     color: '#fff',
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '700',
   },
-  rowDetail: {
+  rowScore: {
+    fontFamily: Fonts.primary,
     color: '#a8a8b3',
-    fontSize: 12,
-    marginTop: 2,
-  },
-  rowDate: {
-    color: '#555577',
-    fontSize: 12,
+    fontSize: 15,
+    marginTop: 4,
   },
   empty: {
     flex: 1,
@@ -165,28 +150,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
   },
-  emptyEmoji: {
-    fontSize: 64,
-  },
   emptyText: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: '700',
-  },
-  emptySubtext: {
+    fontFamily: Fonts.primary,
     color: '#a8a8b3',
     fontSize: 15,
-  },
-  playBtn: {
-    backgroundColor: '#e94560',
-    borderRadius: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 32,
-    marginTop: 8,
-  },
-  playBtnText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '700',
+    textAlign: 'center',
+    paddingTop: 40,
   },
 });

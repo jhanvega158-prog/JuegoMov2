@@ -1,17 +1,12 @@
-import React, { useEffect } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  StatusBar,
-} from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import {  View,  Text,  TouchableOpacity,  StyleSheet,  StatusBar,  ActivityIndicator,  Alert,  FlatList,} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../types/navigation';
-import { saveScore } from '../utils/storage';
+import { Resultado, RootStackParamList } from '../types/navigation';
+import { getScores, saveScore } from '../utils/storage';
 import { useInterstitialAd } from '../hooks/useInterstitialAd';
+import { Fonts } from '../../style/estiloGlobal';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Results'>;
@@ -33,14 +28,74 @@ function getResultMessage(pct: number) {
 }
 
 export default function ResultsScreen({ navigation, route }: Props) {
-  const { score, correctAnswers, totalQuestions, category, wrongAnswers } = route.params;
-  const percentage = Math.round((correctAnswers / totalQuestions) * 100);
+  const params = route.params;
   const { showAdIfReady } = useInterstitialAd();
+  const [resultados, setResultados] = useState<Resultado[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const partidaGuardada = useRef<number | null>(null);
+
+  const score = params?.score ?? 0;
+  const correctAnswers = params?.correctAnswers ?? 0;
+  const totalQuestions = params?.totalQuestions ?? 0;
+  const category = params?.category ?? 'all';
+  const wrongAnswers = params?.wrongAnswers ?? [];
+  const percentage = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
+
+  async function leerResultados() {
+    try {
+      const lista = await getScores();
+      setResultados(lista);
+      setCargando(false);
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert('Error', error.message);
+      }
+      setCargando(false);
+    }
+  }
 
   useEffect(() => {
-    saveScore({ score, correctAnswers, totalQuestions, category }).catch(() => {});
+    if (!params) {
+      setCargando(false);
+      return;
+    }
+
+    if (partidaGuardada.current === params.playedAt) return;
+    partidaGuardada.current = params.playedAt;
+
+    async function guardarYLeerResultados() {
+      try {
+        await saveScore({ score, correctAnswers, totalQuestions, category });
+        await leerResultados();
+      } catch (error) {
+        if (error instanceof Error) {
+          Alert.alert('Error', error.message);
+        }
+        setCargando(false);
+      }
+    }
+
+    guardarYLeerResultados();
     showAdIfReady();
-  }, []);
+  }, [params?.playedAt]);
+
+  if (!params) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="light-content" backgroundColor="#1a1a2e" />
+        <View style={styles.content}>
+          <Text style={styles.message}>No hay resultados para mostrar</Text>
+          <TouchableOpacity
+            style={[styles.button, styles.buttonPrimary]}
+            onPress={() => navigation.navigate('Home')}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.buttonTextPrimary}>Ir al inicio</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -54,29 +109,12 @@ export default function ResultsScreen({ navigation, route }: Props) {
           <Text style={styles.scoreLabel}>Puntaje final</Text>
           <Text style={styles.scoreValue}>{score}</Text>
         </View>
-
-        <View style={styles.statsRow}>
-          <View style={styles.stat}>
-            <Text style={styles.statValue}>{correctAnswers}</Text>
-            <Text style={styles.statLabel}>Correctas</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.stat}>
-            <Text style={styles.statValue}>{totalQuestions - correctAnswers}</Text>
-            <Text style={styles.statLabel}>Incorrectas</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.stat}>
-            <Text style={styles.statValue}>{percentage}%</Text>
-            <Text style={styles.statLabel}>Acierto</Text>
-          </View>
-        </View>
       </View>
 
       <View style={styles.buttons}>
         <TouchableOpacity
           style={[styles.button, styles.buttonPrimary]}
-          onPress={() => navigation.replace('Game', { category })}
+          onPress={() => navigation.navigate('Game', { category, gameId: Date.now() })}
           activeOpacity={0.8}
         >
           <Text style={styles.buttonTextPrimary}>🔄  Jugar de nuevo</Text>
@@ -102,7 +140,7 @@ export default function ResultsScreen({ navigation, route }: Props) {
 
         <TouchableOpacity
           style={[styles.button, styles.buttonOutline]}
-          onPress={() => navigation.popToTop()}
+          onPress={() => navigation.navigate('Home')}
           activeOpacity={0.8}
         >
           <Text style={styles.buttonTextOutline}>🏠  Ir al inicio</Text>
@@ -128,6 +166,7 @@ const styles = StyleSheet.create({
     fontSize: 80,
   },
   message: {
+    fontFamily: Fonts.primary,
     color: '#fff',
     fontSize: 22,
     fontWeight: '700',
@@ -141,6 +180,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   scoreLabel: {
+    fontFamily: Fonts.primary,
     color: 'rgba(255,255,255,0.8)',
     fontSize: 14,
     fontWeight: '600',
@@ -148,6 +188,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   scoreValue: {
+    fontFamily: Fonts.primary,
     color: '#fff',
     fontSize: 52,
     fontWeight: '900',
@@ -167,11 +208,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statValue: {
+    fontFamily: Fonts.primary,
     color: '#fff',
     fontSize: 24,
     fontWeight: '800',
   },
   statLabel: {
+    fontFamily: Fonts.primary,
     color: '#a8a8b3',
     fontSize: 12,
     marginTop: 4,
@@ -183,6 +226,37 @@ const styles = StyleSheet.create({
   buttons: {
     gap: 12,
     paddingBottom: 24,
+  },
+  resultsList: {
+    maxHeight: 170,
+    marginBottom: 14,
+  },
+  listTitle: {
+    fontFamily: Fonts.primary,
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  flatList: {
+    borderTopWidth: 1,
+    borderTopColor: '#0f3460',
+  },
+  resultItem: {
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#0f3460',
+  },
+  resultText: {
+    fontFamily: Fonts.primary,
+    color: '#e2e2e2',
+    fontSize: 14,
+  },
+  emptyResults: {
+    fontFamily: Fonts.primary,
+    color: '#a8a8b3',
+    fontSize: 14,
+    paddingVertical: 8,
   },
   button: {
     borderRadius: 14,
@@ -208,21 +282,25 @@ const styles = StyleSheet.create({
     borderColor: '#a8a8b3',
   },
   buttonTextPrimary: {
+    fontFamily: Fonts.primary,
     color: '#fff',
     fontSize: 16,
     fontWeight: '700',
   },
   buttonTextSecondary: {
+    fontFamily: Fonts.primary,
     color: '#e2e2e2',
     fontSize: 16,
     fontWeight: '600',
   },
   buttonTextReview: {
+    fontFamily: Fonts.primary,
     color: '#e94560',
     fontSize: 16,
     fontWeight: '700',
   },
   buttonTextOutline: {
+    fontFamily: Fonts.primary,
     color: '#a8a8b3',
     fontSize: 16,
     fontWeight: '600',

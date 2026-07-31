@@ -12,6 +12,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import { CATEGORIES } from '../data/questions_es';
 import { QUESTIONS_ES } from '../data/questions_es';
+import { Fonts } from '../../style/estiloGlobal';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'CategorySelect'>;
@@ -57,7 +58,7 @@ export default function CategorySelectScreen({ navigation }: Props) {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.card}
-            onPress={() => navigation.navigate('Game', { category: item })}
+            onPress={() => navigation.navigate('Game', { category: item, gameId: Date.now() })}
             activeOpacity={0.8}
           >
             <Text style={styles.cardIcon}>{getIcon(item)}</Text>
@@ -79,6 +80,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1a1a2e',
   },
   title: {
+    fontFamily: Fonts.primary,
     fontSize: 22,
     fontWeight: '700',
     color: '#fff',
@@ -108,11 +110,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardTitle: {
+    fontFamily: Fonts.primary,
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
   },
   cardCount: {
+    fontFamily: Fonts.primary,
     color: '#a8a8b3',
     fontSize: 13,
     marginTop: 2,
