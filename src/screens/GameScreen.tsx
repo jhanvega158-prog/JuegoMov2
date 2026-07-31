@@ -16,6 +16,7 @@ import { GAME_CONFIG } from "../config/game.config";
 import { Question } from "../data/questions_es";
 import { useGameSounds } from "../hooks/useGameSounds";
 import { setAudioModeAsync, useAudioPlayer } from "expo-audio";
+import { Fonts } from "../../style/estiloGlobal";
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Game">;
@@ -293,11 +294,13 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   progress: {
+    fontFamily: Fonts.primary,
     color: "#a8a8b3",
     fontSize: 14,
     fontWeight: "600",
   },
   category: {
+    fontFamily: Fonts.primary,
     color: "#e94560",
     fontSize: 13,
     fontWeight: "700",
@@ -305,6 +308,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   score: {
+    fontFamily: Fonts.primary,
     color: "#fff",
     fontSize: 15,
     fontWeight: "700",
@@ -322,6 +326,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   timerText: {
+    fontFamily: Fonts.primary,
     fontSize: 13,
     fontWeight: "700",
     textAlign: "right",
@@ -333,6 +338,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   questionText: {
+    fontFamily: Fonts.primary,
     color: "#fff",
     fontSize: 22,
     fontWeight: "700",
@@ -365,12 +371,14 @@ const styles = StyleSheet.create({
     opacity: 0.4,
   },
   optionLetter: {
+    fontFamily: Fonts.primary,
     color: "#e94560",
     fontWeight: "800",
     fontSize: 15,
     width: 28,
   },
   optionText: {
+    fontFamily: Fonts.primary,
     color: "#e2e2e2",
     fontSize: 15,
     flex: 1,

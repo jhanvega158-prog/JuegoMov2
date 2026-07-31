@@ -14,6 +14,7 @@ import {
   RootStackParamList,
 } from "../src/types/navigation";
 import PerfilScreen from "../src/screens/PerfilScreen";
+import { Fonts } from "../style/estiloGlobal";
 
 const Stack = createStackNavigator<MainStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -24,7 +25,11 @@ const hiddenTabOptions = {
 
 function MyStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerTitleStyle: { fontFamily: Fonts.primary },
+      }}
+    >
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Registro" component={RegistroScreen} />
       <Stack.Screen name="Tab" component={MyTabs} />
@@ -39,7 +44,12 @@ function MyTabs() {
       screenOptions={{
         headerStyle: { backgroundColor: "#16213e" },
         headerTintColor: "#e94560",
-        headerTitleStyle: { fontWeight: "700", color: "#fff" },
+        headerTitleStyle: {
+          fontFamily: Fonts.primary,
+          fontWeight: "700",
+          color: "#fff",
+        },
+        tabBarLabelStyle: { fontFamily: Fonts.primary },
         animation: "none",
       }}
     >

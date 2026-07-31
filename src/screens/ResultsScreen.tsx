@@ -6,6 +6,7 @@ import { RouteProp } from '@react-navigation/native';
 import { Resultado, RootStackParamList } from '../types/navigation';
 import { getScores, saveScore } from '../utils/storage';
 import { useInterstitialAd } from '../hooks/useInterstitialAd';
+import { Fonts } from '../../style/estiloGlobal';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Results'>;
@@ -165,6 +166,7 @@ const styles = StyleSheet.create({
     fontSize: 80,
   },
   message: {
+    fontFamily: Fonts.primary,
     color: '#fff',
     fontSize: 22,
     fontWeight: '700',
@@ -178,6 +180,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   scoreLabel: {
+    fontFamily: Fonts.primary,
     color: 'rgba(255,255,255,0.8)',
     fontSize: 14,
     fontWeight: '600',
@@ -185,6 +188,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   scoreValue: {
+    fontFamily: Fonts.primary,
     color: '#fff',
     fontSize: 52,
     fontWeight: '900',
@@ -204,11 +208,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statValue: {
+    fontFamily: Fonts.primary,
     color: '#fff',
     fontSize: 24,
     fontWeight: '800',
   },
   statLabel: {
+    fontFamily: Fonts.primary,
     color: '#a8a8b3',
     fontSize: 12,
     marginTop: 4,
@@ -226,6 +232,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   listTitle: {
+    fontFamily: Fonts.primary,
     color: '#fff',
     fontSize: 16,
     fontWeight: '700',
@@ -241,10 +248,12 @@ const styles = StyleSheet.create({
     borderBottomColor: '#0f3460',
   },
   resultText: {
+    fontFamily: Fonts.primary,
     color: '#e2e2e2',
     fontSize: 14,
   },
   emptyResults: {
+    fontFamily: Fonts.primary,
     color: '#a8a8b3',
     fontSize: 14,
     paddingVertical: 8,
@@ -273,21 +282,25 @@ const styles = StyleSheet.create({
     borderColor: '#a8a8b3',
   },
   buttonTextPrimary: {
+    fontFamily: Fonts.primary,
     color: '#fff',
     fontSize: 16,
     fontWeight: '700',
   },
   buttonTextSecondary: {
+    fontFamily: Fonts.primary,
     color: '#e2e2e2',
     fontSize: 16,
     fontWeight: '600',
   },
   buttonTextReview: {
+    fontFamily: Fonts.primary,
     color: '#e94560',
     fontSize: 16,
     fontWeight: '700',
   },
   buttonTextOutline: {
+    fontFamily: Fonts.primary,
     color: '#a8a8b3',
     fontSize: 16,
     fontWeight: '600',

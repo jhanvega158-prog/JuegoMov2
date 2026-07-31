@@ -3,6 +3,7 @@ import {View,Text,TouchableOpacity,StyleSheet,FlatList,StatusBar,Alert,ActivityI
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { getScores, HighScore } from '../utils/storage';
+import { Fonts } from '../../style/estiloGlobal';
 
 export default function HighScoresScreen() {
   const [scores, setScores] = useState<HighScore[]>([]);
@@ -86,11 +87,13 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   title: {
+    fontFamily: Fonts.primary,
     fontSize: 22,
     fontWeight: '700',
     color: '#fff',
   },
   verLista: {
+    fontFamily: Fonts.primary,
     color: '#e94560',
     fontSize: 15,
     fontWeight: '700',
@@ -101,6 +104,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   listTitle: {
+    fontFamily: Fonts.primary,
     color: '#a8a8b3',
     fontSize: 15,
     marginBottom: 4,
@@ -119,6 +123,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1e1030',
   },
   position: {
+    fontFamily: Fonts.primary,
     color: '#e94560',
     fontSize: 18,
     fontWeight: '800',
@@ -128,11 +133,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   rowNick: {
+    fontFamily: Fonts.primary,
     color: '#fff',
     fontSize: 16,
     fontWeight: '700',
   },
   rowScore: {
+    fontFamily: Fonts.primary,
     color: '#a8a8b3',
     fontSize: 15,
     marginTop: 4,
@@ -144,6 +151,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   emptyText: {
+    fontFamily: Fonts.primary,
     color: '#a8a8b3',
     fontSize: 15,
     textAlign: 'center',
