@@ -5,12 +5,14 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import { CATEGORIES } from '../data/questions_es';
 import { Fonts } from '../../style/estiloGlobal';
+import { useGame } from '../context/GameContext';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
 };
 
 export default function HomeScreen({ navigation }: Props) {
+  const { startGame } = useGame();
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#1a1a2e" />
@@ -24,7 +26,10 @@ export default function HomeScreen({ navigation }: Props) {
       <View style={styles.buttons}>
         <TouchableOpacity
           style={[styles.button, styles.buttonPrimary]}
-          onPress={() => navigation.navigate('Game', { category: 'all', gameId: Date.now() })}
+          onPress={() => {
+            startGame('all');
+            navigation.navigate('Roulette', { category: 'all' });
+          }}
           activeOpacity={0.8}
         >
           <Text style={styles.buttonTextPrimary}>▶  Jugar ahora</Text>

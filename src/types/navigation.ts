@@ -26,9 +26,11 @@ export type MainStackParamList = {
 export type RootStackParamList = {
   Home: undefined;
   CategorySelect: undefined;
+  Roulette: { category: string };
   Game: {
     category: string | 'all';
-    gameId?: number;
+    difficulty: 'easy' | 'medium' | 'hard';
+    roundId: number;
   };
   Results: {
     score: number;

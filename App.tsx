@@ -2,6 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { Navegador } from './Navigation/MainNavigator';
 import { useGlobalFonts } from './style/estiloGlobal';
+import { GameProvider } from './src/context/GameContext';
 
 export default function App() {
   const [loaded, error] = useGlobalFonts();
@@ -15,8 +16,10 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <Navegador/>
-    </NavigationContainer>
+    <GameProvider>
+      <NavigationContainer>
+        <Navegador/>
+      </NavigationContainer>
+    </GameProvider>
   );
 }
