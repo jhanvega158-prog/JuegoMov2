@@ -42,4 +42,5 @@ export type RootStackParamList = {
     wrongAnswers: WrongAnswer[];
   };
   HighScores: undefined;
+  Perfil: undefined;
 };
